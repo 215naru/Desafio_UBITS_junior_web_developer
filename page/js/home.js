@@ -7,29 +7,34 @@ const init = async () => {
   // NOTA: puedes abrir la url en tu navegador para ver la estructura de la información obtenida.
 
   const url = "https://buty619.github.io/pricing.json";
+  const response = await fetch(url);
+  const {basic, eco, pro, business} = await jsonData.json();
   // 2. luego de obtenida la información de los planes se debe inyectar los valores obtenidos
   // en el html de cada card de los posibles planes a comprar.
   // 2.1 primero se debe obtener el elemento card del plan basic para esto puedes usar su clase (validalo en el HTML)
-  const basicCard = ...;
+  const basicCard = document.querySelector(".pricing-card.basic");
   // 2.1.1 del elemento obtenido selecciona el titulo e inyecta el valor obtenido de la API
-  const basicCardTitle = ...;
+  const basicCardTitle = basicCard.querySelector(".plan-title");
+  basicCardTitle.innerHTML = basic.name;
   // 2.1.2 del elemento card obtenido selecciona el precio e inyecta el valor obtenido de la API ten en cuenta que
   // el componente del precio esta compuesto por los tags de small y span valida esto al momento de inyectar
   // el valor obtenido de la llamada a la API
-  const basicCardPrice = ...;
-  const basicCardPriceSpan = ...;
+  const basicCardPrice = basicCard.querySelector(".price-title");
+  const basicCardPriceSpan = basicCardPrice.querySelector("span");
+  basicCardPriceSpan.innerHTML = basic.price; 
   // 2.1.3  ahora inyecta el valor del descuento de este plan en el span que se encuentra dentro del elemento
   // con clase `badge-box`.
-  const basicCardDiscount = ...;
-  const basicCardDiscountSpan = ...;
+  const basicCardDiscount = basicCard.querySelector(".badge-box");
+  const basicCardDiscountSpan = basicCardDiscount.querySelector("span");
+  basicCardDiscountSpan.innerHTML = `Save ${basic.discount}`;
   // 2.1.4 por ultimo completa la informacion de las caracteristicas del plan para esto tambien ten en cuenta
   // la estructura del HTML asi como la estructura de la información donde se encuentra las caracteristicas del plan.
   // NOTA: para este paso te recomendamos obtener un array con los elementos li y recorrerlos agregando las caracteristicas
   // del plan
-  const basicCardList = ...;
-  const basicCardElementList = ...;
+  const basicCardList = basicCard.querySelector("ul");
+  const basicCardElementList = basicCardList.querySelectorAll("li");
   [...basicCardElementList].map(
-    (element, i) => {...}
+    (element, i) => {element.innerHTML = basic.characteristics[i]}
   );
   // 2.2 sigue los pasos anteriormente mencionados para llenar la información de cada uno de los planes,
   // esto lo puedes hacer realizando el proceso para cada card o realizando una iteración que te permita
