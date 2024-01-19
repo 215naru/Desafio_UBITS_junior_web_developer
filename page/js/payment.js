@@ -5,12 +5,12 @@
 // se puede utilizar el metodo URLSearchParams y el window.location.search
 const urlParams = new URLSearchParams(window.location.search);
 const planName = urlParams.get("name");
-const planPrice = urlParams.ger("price");
+const planPrice = urlParams.get("price");
 
 const init = async () => {
   // 1.2 inyecta los valores obtenidos en los `billing_details`.
   const billingDetails = document.querySelector(".billing_details");
-  const billingDetailsSpan = billingDetails.querySelector("span");
+  const billingDetailsSpan = billingDetails.querySelectorAll("span");
   billingDetailsSpan[0].innerHTML=planName;
   billingDetailsSpan[1].innerHTML=planPrice;
 };
