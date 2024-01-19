@@ -3,14 +3,16 @@
 
 // 1.1 obtener de los query params los valores del nombre y precio del plan comprado para esto
 // se puede utilizar el metodo URLSearchParams y el window.location.search
-const urlParams = ...;
-const planName = ...;
-const planPrice = ..;
+const urlParams = new URLSearchParams(window.location.search);
+const planName = urlParams.get("name");
+const planPrice = urlParams.ger("price");
 
 const init = async () => {
   // 1.2 inyecta los valores obtenidos en los `billing_details`.
-  const billingDetails = ...;
-  const billingDetailsSpan = ...;
+  const billingDetails = document.querySelector(".billing_details");
+  const billingDetailsSpan = billingDetails.querySelector("span");
+  billingDetailsSpan[0].innerHTML=planName;
+  billingDetailsSpan[1].innerHTML=planPrice;
 };
 
 init();
@@ -20,12 +22,12 @@ init();
 // asi como la card en la cual se inyectaran los valores del formulario para generar un efecto
 // de interactividad.
 
-const form = ...;
-const name = ...;
-const number = ...;
-const date = ...;
-const cvv = ...;
-const visa = ...;
+const form = document.querySelector(".form");
+const name = document.getElementById("name");
+const number = document.getElementById("number");
+const date = document.getElementById("date");
+const cvv = document.getElementById("cvv");
+const visa = document.querySelector(".card");
 
 // 3. crea una funcion showError que acepte 2 parametros, el primero el elemento HTML que tiene
 // un error en su valor (ejemplo: una tarjeta de credito de menos de 19 caracteres) y el segundo
@@ -36,9 +38,9 @@ const visa = ...;
 /*  SHOW ERROR  */
 function showError(element, error) {
   if (error === true) {
-    ...
+    element.style.opacity = "1";
   } else {
-    ...
+    element.style.opacity = "0";
   }
 }
 
@@ -49,10 +51,10 @@ function showError(element, error) {
 
 /*  CHANGE THE FORMAT NAME  */
 name.addEventListener("input", function (e) {
-  let alert1 = ...;
-  let error = ...;
+  let alert1 = document.getElementById("alert-1");
+  let error = e.target.value === "";
   showError(alert1, error);
-  document.getElementById("card-name").textContent = ...;
+  document.getElementById("card-name").textContent = e.target.value;
 });
 
 // 5. agrega en event listener al input numbre (numero de la credit card) donde se ejecute en la acción 'input'
@@ -65,10 +67,11 @@ name.addEventListener("input", function (e) {
 number.addEventListener("input", function (e) {
   e.target.value = numberAutoFormat(number.value);
 
+  let error = e.target.value.length != 19
   //show error when is different of 16 numbers and 3 white space
-  let error = ...;
-  let alert2 = ...;
+  let alert2 = document.getElementById("alert-2");
   showError(alert2, error);
+  document.querySelector(".card__number").textContent = this.value;
 });
 
 function numberAutoFormat(valueNumber) {
@@ -76,7 +79,7 @@ function numberAutoFormat(valueNumber) {
   let v = valueNumber.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
 
   // separar los valores en grupos de 4 numeros
-  let matches = ...;
+  let matches = v.match(/\d{4,16}/g);
   let match = (matches && matches[0]) || "";
   let parts = [];
 
@@ -104,16 +107,16 @@ function numberAutoFormat(valueNumber) {
 date.addEventListener("input", function (e) {
   e.target.value = dateAutoFormat(e.target.value);
   // show error if is not a valid date
-  let alert3 = ...;
+  let alert3 = document.getElementById("alert-3");
   showError(alert3, isNotDate(this));
   let dateNumber = date.value.match(/\d{2,4}/g);
-  document.getElementById("month").textContent = ...;
-  document.getElementById("year").textContent = ...;
+  document.getElementById("month").textContent = dateNumber[0];
+  document.getElementById("year").textContent = dateNumber[1];
 });
 
 function dateAutoFormat(dateValue) {
   // 6.1 agrega la expresion regular o logica que elimine espacios en blanco y luego caracteres no numericos.
-  let v = dateValue.replace(...).replace(...);
+  let v = dateValue.replace(/\s+/g,"").replace(/[^0-9]/gi, "");
 
   // min of 2 digits and max of 4
   let matches = v.match(/\d{2,4}/g);
@@ -132,11 +135,11 @@ function dateAutoFormat(dateValue) {
 }
 
 function isNotDate(element) {
-  let actualDate = ...;
+  let actualDate = new Date();
   // 6.2 arregla esta expresion para obtener el numero del mes real
-  let month = ...;
+  let month = actualDate.getMonth()+1;
   // 6.3 arregla esta expresion para obtener los ultimos dos digitos del año dado
-  let year = ...; // 2022 -> 22
+  let year = Number(actualDate.getFullYear().toString().substr(-2)); // 2022 -> 22
   let dateNumber = element.value.match(/\d{2,4}/g);
   let monthNumber = Number(dateNumber[0]);
   let yearNumber = Number(dateNumber[1]);
@@ -160,7 +163,9 @@ function isNotDate(element) {
 
 /*  CHANGE THE FORMAT CVV  */
 cvv.addEventListener("input", function (e) {
-  ...
+  let alert4=document.getElementById("alert-4");
+  let error=this.value.length <3;
+  showError(alert4,error)
 });
 
 // 8. agrega el evento `submit` al form tag para completar la compra del paquete para esto
@@ -174,13 +179,19 @@ cvv.addEventListener("input", function (e) {
 /*  VALIDATION FORM WHEN PRESS THE BUTTON   */
 form.addEventListener("submit", function (e) {
   // 1. if any input is empty show the alert of that input
-  let inputs = ...;
+  e.preventDefault();
+  let inputs = document.querySelectorAll("input");
   for (let i = 0; i < inputs.length; i++) {
     if (inputs[i].value === "") {
       inputs[i].nextElementSibling.style.opacity = "1";
     }
   }
   if (
+    name.value === "" ||
+    number.value.length !== 19 ||
+    date.value.length !== 5 ||
+    isNotDate(date) === true ||
+    cvv.value.length < 3
       // 2. si no hay ningún nombre
       // 3. si la longitud de la tarjeta de número no es válida (16 números y 3 espacios en blanco)
       // 4. si no es una fecha valida (4 numero y "/" o no es una fecha valida)
@@ -188,5 +199,7 @@ form.addEventListener("submit", function (e) {
   ) {
     return;
   }
-  window.location...;
+  window.location.assign(
+    `/bill.html?name=${name.value}&planName=${planName}&price=${planPrice}`
+  );
 });
